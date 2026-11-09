@@ -66,6 +66,33 @@ builds don't require a paid team. CI runs with
 testing breaks Keychain entitlements — use a normally-signed build for that
 (see `AGENTS.md`).
 
+### Troubleshooting automatic signing
+
+If Signing & Capabilities reports **"An Application Group with Identifier …
+is not available"** or `iOS Team Provisioning Profile: *` doesn't include the
+App Groups / Push Notifications capability, the project is still using the
+maintainer's bundle ID with your team. App IDs and app groups are globally
+unique, so automatic signing cannot register them on your team and falls back
+to a wildcard profile that cannot carry those entitlements. The fix is the
+`Config/Local.xcconfig` above: override `DEVELOPMENT_TEAM`,
+`APP_BUNDLE_IDENTIFIER` and `APP_GROUP_IDENTIFIER` together (keeping
+`$(APP_IDENTIFIER_SUFFIX)`), then choose **Try Again** so Xcode registers the
+new IDs on your team. Keep the keychain access groups derived from
+`$(DEVELOPMENT_TEAM).$(APP_BUNDLE_IDENTIFIER)`; don't hardcode them.
+
+Picking a Team in Xcode's Signing & Capabilities also writes
+`DEVELOPMENT_TEAM` into `project.pbxproj`. Restore that file
+(`git restore HermesMobile.xcodeproj/project.pbxproj`) so signing stays a
+local override and the project file isn't part of your diff. A renamed bundle
+ID is intentionally absent from `PushBundleIdentifier.supported`, so push
+registration stays disabled on forks — run your own relay if you need it.
+
+If the same screen says **"Communication with Apple failed"**, or
+`xcodebuild` reports `No Accounts` / `missing Xcode-Username`, Xcode has no
+usable Apple ID credentials (the cached team list in its preferences is not a
+login). Re-add your Apple ID under Xcode → Settings → Accounts, then retry:
+automatic signing can only register App IDs and app groups while signed in.
+
 ## What PRs we welcome (and what we don't)
 
 Bug fixes, test coverage, and focused improvements are always welcome. For
