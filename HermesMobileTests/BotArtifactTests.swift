@@ -103,6 +103,56 @@ import UniformTypeIdentifiers
         XCTAssertEqual(model.export?.contentType, .data)
     }
 
+    func testHTMLReportRendersInlineContentAndBlocksExternalImagesAndScripts() async throws {
+        let html = Data("""
+            <!doctype html><meta charset="utf-8">
+            <style>td { color: rgb(10, 20, 30) }</style>
+            <table><tr><td>每日复盘</td></tr></table>
+            <img src="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%221%22%20height=%221%22/%3E">
+            <script>document.body.dataset.ranScript = 'yes';</script>
+            """.utf8)
+        let model = BotArtifactPreviewModel()
+        await model.load(name: "report.html") { html }
+        let coordinator = StaticHTMLReportView.Coordinator()
+        let webView = coordinator.makeWebView(data: try XCTUnwrap(model.fileData))
+        let loaded = expectation(description: "HTML report loaded")
+        let observation = webView.observe(\.estimatedProgress, options: [.initial, .new]) { _, change in
+            if change.newValue == 1 { loaded.fulfill() }
+        }
+        await fulfillment(of: [loaded], timeout: 10)
+        observation.invalidate()
+
+        let inspected = expectation(description: "HTML report inspected")
+        var inspection: Result<Any, Error>?
+        let inspect = Task {
+            defer { inspected.fulfill() }
+            do {
+                inspection = .success(try await webView.callAsyncJavaScript("""
+                    const cell = document.querySelector('td');
+                    const externalImage = 'https://external.invalid/pixel.png';
+                    const blocked = new Promise(resolve => {
+                        document.addEventListener('securitypolicyviolation', event => {
+                            if (event.effectiveDirective === 'img-src') resolve(event.blockedURI);
+                        }, { once: true });
+                    });
+                    document.body.appendChild(new Image()).src = externalImage;
+                    return [cell.textContent, getComputedStyle(cell).color,
+                            document.images[0].naturalWidth === 1 ? 'image' : 'missing',
+                            document.body.dataset.ranScript ?? 'static', await blocked];
+                    """, contentWorld: .page))
+            } catch {
+                inspection = .failure(error)
+            }
+        }
+        defer { inspect.cancel() }
+        await fulfillment(of: [inspected], timeout: 10)
+        let result = try XCTUnwrap(inspection).get()
+        XCTAssertEqual(result as? [String],
+                       ["每日复盘", "rgb(10, 20, 30)", "image", "static", "https://external.invalid/pixel.png"])
+        XCTAssertEqual(model.export?.data, html)
+        withExtendedLifetime(coordinator) {}
+    }
+
     func testPreviewHasNothingToExportAfterAFailedOrOversizedDownload() async throws {
         let model = BotArtifactPreviewModel()
         await model.load(name: "report.pdf") { Data("%PDF-fixture".utf8) }

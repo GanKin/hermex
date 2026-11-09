@@ -18,6 +18,15 @@ final class TranscriptMediaParserTests: XCTestCase {
                        [.text("[Report](https://cdn.example/report.pdf)")], "ordinary external document links stay links")
     }
 
+    func testHermesHTMLReportCardsOpenInPreviewWhileUnknownFilesStayDownloadable() {
+        let segments = TranscriptMediaParser.segments(
+            in: "MEDIA:/host/daily-report.HTML MEDIA:https://cdn.example/report.htm?download=1 "
+                + "MEDIA:/host/archive.zip MEDIA:https://cdn.example/report.bin?name=report.html"
+        )
+        XCTAssertEqual(mediaReferences(in: segments).map(\.isHermesDocumentCandidate),
+                       [true, true, false, false])
+    }
+
     func testParsesLocalPathToken() {
         let segments = TranscriptMediaParser.segments(
             in: "Screenshot: MEDIA:/Users/hermes/.hermes/browser_screenshots/example.png loaded"

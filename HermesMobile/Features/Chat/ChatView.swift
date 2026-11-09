@@ -1353,7 +1353,11 @@ struct ChatView: View {
                 }
             }
             .sheet(item: $hermesFilePreviewItem) { item in
-                BotArtifactPreview(reference: item.reference, title: item.name) {
+                BotArtifactPreview(
+                    reference: item.reference,
+                    title: item.name,
+                    rendersHTML: !item.isSentAttachment && item.reference.isHTMLReport
+                ) {
                     try await hermesFilePreviewData(for: item)
                 }
             }
