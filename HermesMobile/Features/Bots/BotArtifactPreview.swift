@@ -70,6 +70,8 @@ struct BotArtifactPreview: View {
     @Environment(\.dismiss) private var dismiss
     @State private var model = BotArtifactPreviewModel()
     @State private var attempt = 0
+    @State private var allowsReportScripts = false
+    @State private var isInteractionConfirmationPresented = false
     @State private var isFileExporterPresented = false
     @State private var exportErrorMessage: String?
 
@@ -77,7 +79,8 @@ struct BotArtifactPreview: View {
         NavigationStack {
             Group {
                 if rendersHTML, let data = model.fileData {
-                    StaticHTMLReportView(data: data)
+                    StaticHTMLReportView(data: data, allowsScripts: allowsReportScripts)
+                        .id(allowsReportScripts)
                 } else if let url = model.fileURL {
                     QuickLookFileView(url: url)
                 } else if let error = model.errorMessage {
@@ -96,6 +99,11 @@ struct BotArtifactPreview: View {
             .navigationTitle(name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if rendersHTML, model.fileData != nil {
+                    ToolbarItem(placement: .topBarLeading) {
+                        interactionButton
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     if let url = model.fileURL {
@@ -135,7 +143,34 @@ struct BotArtifactPreview: View {
             Text(exportErrorMessage ?? "")
         }
         .task(id: attempt) { await model.load(name: name, download: download) }
-        .onDisappear { model.cleanup() }
+        .onDisappear {
+            allowsReportScripts = false
+            model.cleanup()
+        }
+    }
+
+    private var interactionButton: some View {
+        Button {
+            if allowsReportScripts {
+                allowsReportScripts = false
+            } else {
+                isInteractionConfirmationPresented = true
+            }
+        } label: {
+            Image(systemName: "hand.tap")
+                .symbolVariant(allowsReportScripts ? .fill : .none)
+        }
+        .accessibilityLabel(allowsReportScripts ? Text("Use Static Preview") : Text("Enable Interactive Preview"))
+        .confirmationDialog(
+            "Enable Interactive Preview",
+            isPresented: $isInteractionConfirmationPresented,
+            titleVisibility: .visible
+        ) {
+            Button("Enable Interactive Preview") { allowsReportScripts = true }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This runs scripts embedded in this report.")
+        }
     }
 
     private var name: String { title ?? reference.displayName }
@@ -144,11 +179,12 @@ struct BotArtifactPreview: View {
 /// Renders the downloaded bytes with a local response and a restrictive policy.
 struct StaticHTMLReportView: UIViewRepresentable {
     let data: Data
+    let allowsScripts: Bool
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
     func makeUIView(context: Context) -> WKWebView {
-        context.coordinator.makeWebView(data: data)
+        context.coordinator.makeWebView(data: data, allowsScripts: allowsScripts)
     }
 
     func updateUIView(_ view: WKWebView, context: Context) {}
@@ -157,21 +193,25 @@ struct StaticHTMLReportView: UIViewRepresentable {
         private let documentURL = URL(string: "https://hermex-report.invalid/")!
         private var allowsInitialNavigation = true
 
-        func makeWebView(data: Data) -> WKWebView {
+        func makeWebView(data: Data, allowsScripts: Bool = false) -> WKWebView {
             let configuration = WKWebViewConfiguration()
             configuration.websiteDataStore = .nonPersistent()
-            configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+            configuration.defaultWebpagePreferences.allowsContentJavaScript = allowsScripts
 
             let view = WKWebView(frame: .zero, configuration: configuration)
             view.allowsLinkPreview = false
             view.navigationDelegate = self
+            var policy = "default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:; base-uri 'none'; form-action 'none'"
+            if allowsScripts {
+                policy += "; sandbox allow-scripts; script-src 'unsafe-inline'"
+            }
             let response = HTTPURLResponse(
                 url: documentURL,
                 statusCode: 200,
                 httpVersion: nil,
                 headerFields: [
                     "Content-Type": "text/html",
-                    "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:; base-uri 'none'; form-action 'none'",
+                    "Content-Security-Policy": policy,
                     "X-DNS-Prefetch-Control": "off"
                 ]
             )!

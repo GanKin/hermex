@@ -153,6 +153,39 @@ import UniformTypeIdentifiers
         withExtendedLifetime(coordinator) {}
     }
 
+    func testInteractiveHTMLDrawsCanvasWithoutExternalScriptsOrNetworkAccess() async throws {
+        let html = Data("""
+            <!doctype html><meta charset="utf-8">
+            <canvas width="32" height="32"></canvas>
+            <script src="https://external.invalid/chart.js"></script>
+            <script>
+            const context = document.querySelector('canvas').getContext('2d');
+            context.fillRect(0, 0, 32, 32);
+            document.body.dataset.popup = window.open('https://external.invalid/') === null
+                ? 'blocked' : 'opened';
+            </script>
+            """.utf8)
+        let coordinator = StaticHTMLReportView.Coordinator()
+        let webView = coordinator.makeWebView(data: html, allowsScripts: true)
+        let loaded = expectation(description: "Interactive report loaded")
+        let observation = webView.observe(\.estimatedProgress, options: [.initial, .new]) { _, change in
+            if change.newValue == 1 { loaded.fulfill() }
+        }
+        await fulfillment(of: [loaded], timeout: 10)
+        observation.invalidate()
+
+        let result = try await webView.callAsyncJavaScript("""
+            const pixel = document.querySelector('canvas').getContext('2d').getImageData(0, 0, 1, 1);
+            const response = await fetch('https://external.invalid/data')
+                .then(() => 'connected', () => 'blocked');
+            const resources = performance.getEntriesByType('resource');
+            return [pixel.data[3] === 255, document.body.dataset.popup === 'blocked',
+                    response === 'blocked', !resources.some(entry => entry.name.includes('external.invalid'))];
+            """, contentWorld: .page)
+        XCTAssertEqual(result as? [Bool], [true, true, true, true])
+        withExtendedLifetime(coordinator) {}
+    }
+
     func testPreviewHasNothingToExportAfterAFailedOrOversizedDownload() async throws {
         let model = BotArtifactPreviewModel()
         await model.load(name: "report.pdf") { Data("%PDF-fixture".utf8) }

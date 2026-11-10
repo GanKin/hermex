@@ -1,6 +1,324 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Enable Interactive Preview" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "تفعيل المعاينة التفاعلية"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Interaktive Vorschau aktivieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Activar vista previa interactiva"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Activer l’aperçu interactif"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "הפעלת תצוגה מקדימה אינטראקטיבית"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Attiva anteprima interattiva"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "インタラクティブプレビューを有効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "대화형 미리보기 켜기"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Interactief voorbeeld inschakelen"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Włącz interaktywny podgląd"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ativar prévia interativa"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Включить интерактивный просмотр"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Etkileşimli önizlemeyi etkinleştir"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "انٹرایکٹو پیش منظر فعال کریں"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "啟用互動預覽"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "启用交互预览"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "啟用互動預覽"
+          }
+        }
+      }
+    },
+    "This runs scripts embedded in this report." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "سيؤدي هذا إلى تشغيل البرامج النصية المضمّنة في هذا التقرير."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dadurch werden die in diesem Bericht eingebetteten Skripte ausgeführt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esto ejecuta los scripts integrados en este informe."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cette action exécute les scripts intégrés à ce rapport."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "פעולה זו מפעילה סקריפטים המוטמעים בדוח זה."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Questa operazione esegue gli script incorporati nel report."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "このレポートに埋め込まれたスクリプトを実行します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "이 보고서에 포함된 스크립트를 실행합니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hiermee worden scripts uitgevoerd die in dit rapport zijn opgenomen."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spowoduje to uruchomienie skryptów osadzonych w tym raporcie."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Isso executa os scripts incorporados neste relatório."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Это запустит скрипты, встроенные в этот отчёт."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bu işlem, bu rapora gömülü komut dosyalarını çalıştırır."
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "اس سے اس رپورٹ میں شامل اسکرپٹس چلیں گے۔"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "這會執行本報告內嵌的指令碼。"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "这会运行此报告内嵌的脚本。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "這會執行本報告內嵌的指令碼。"
+          }
+        }
+      }
+    },
+    "Use Static Preview" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "استخدام المعاينة الثابتة"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Statische Vorschau verwenden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Usar vista previa estática"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Utiliser l’aperçu statique"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "שימוש בתצוגה מקדימה סטטית"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Usa anteprima statica"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "静的プレビューを使う"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "정적 미리보기 사용"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Statisch voorbeeld gebruiken"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Użyj statycznego podglądu"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Usar prévia estática"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Перейти к статическому просмотру"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Statik önizlemeyi kullan"
+          }
+        },
+        "ur" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "جامد پیش منظر استعمال کریں"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "切換至靜態預覽"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "切换到静态预览"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "切換至靜態預覽"
+          }
+        }
+      }
+    },
     "Approval needed" : { "localizations" : { "ar" : { "stringUnit" : { "state" : "needs_review", "value" : "الموافقة مطلوبة" } }, "de" : { "stringUnit" : { "state" : "needs_review", "value" : "Genehmigung erforderlich" } }, "es" : { "stringUnit" : { "state" : "needs_review", "value" : "Aprobación requerida" } }, "fr" : { "stringUnit" : { "state" : "needs_review", "value" : "Approbation requise" } }, "he" : { "stringUnit" : { "state" : "needs_review", "value" : "נדרש אישור" } }, "it" : { "stringUnit" : { "state" : "needs_review", "value" : "Approvazione richiesta" } }, "ja" : { "stringUnit" : { "state" : "needs_review", "value" : "承認が必要" } }, "ko" : { "stringUnit" : { "state" : "needs_review", "value" : "승인 필요" } }, "nl" : { "stringUnit" : { "state" : "needs_review", "value" : "Goedkeuring vereist" } }, "pl" : { "stringUnit" : { "state" : "needs_review", "value" : "Wymagane zatwierdzenie" } }, "pt-BR" : { "stringUnit" : { "state" : "needs_review", "value" : "Aprovação necessária" } }, "ru" : { "stringUnit" : { "state" : "needs_review", "value" : "Требуется подтверждение" } }, "tr" : { "stringUnit" : { "state" : "needs_review", "value" : "Onay gerekli" } }, "ur" : { "stringUnit" : { "state" : "needs_review", "value" : "منظوری درکار" } }, "zh-HK" : { "stringUnit" : { "state" : "needs_review", "value" : "需要審批" } }, "zh-Hans" : { "stringUnit" : { "state" : "needs_review", "value" : "需要审批" } }, "zh-Hant" : { "stringUnit" : { "state" : "needs_review", "value" : "需要審核" } } } },
     "Approval needed: %@" : { "localizations" : { "ar" : { "stringUnit" : { "state" : "needs_review", "value" : "الموافقة مطلوبة: %@" } }, "de" : { "stringUnit" : { "state" : "needs_review", "value" : "Genehmigung erforderlich: %@" } }, "es" : { "stringUnit" : { "state" : "needs_review", "value" : "Aprobación requerida: %@" } }, "fr" : { "stringUnit" : { "state" : "needs_review", "value" : "Approbation requise : %@" } }, "he" : { "stringUnit" : { "state" : "needs_review", "value" : "נדרש אישור: %@" } }, "it" : { "stringUnit" : { "state" : "needs_review", "value" : "Approvazione richiesta: %@" } }, "ja" : { "stringUnit" : { "state" : "needs_review", "value" : "承認が必要: %@" } }, "ko" : { "stringUnit" : { "state" : "needs_review", "value" : "승인 필요: %@" } }, "nl" : { "stringUnit" : { "state" : "needs_review", "value" : "Goedkeuring vereist: %@" } }, "pl" : { "stringUnit" : { "state" : "needs_review", "value" : "Wymagane zatwierdzenie: %@" } }, "pt-BR" : { "stringUnit" : { "state" : "needs_review", "value" : "Aprovação necessária: %@" } }, "ru" : { "stringUnit" : { "state" : "needs_review", "value" : "Требуется подтверждение: %@" } }, "tr" : { "stringUnit" : { "state" : "needs_review", "value" : "Onay gerekli: %@" } }, "ur" : { "stringUnit" : { "state" : "needs_review", "value" : "منظوری درکار: %@" } }, "zh-HK" : { "stringUnit" : { "state" : "needs_review", "value" : "需要審批：%@" } }, "zh-Hans" : { "stringUnit" : { "state" : "needs_review", "value" : "需要审批：%@" } }, "zh-Hant" : { "stringUnit" : { "state" : "needs_review", "value" : "需要審核：%@" } } } },
     "Expand approval" : { "localizations" : { "ar" : { "stringUnit" : { "state" : "needs_review", "value" : "توسيع الموافقة" } }, "de" : { "stringUnit" : { "state" : "needs_review", "value" : "Genehmigung ausklappen" } }, "es" : { "stringUnit" : { "state" : "needs_review", "value" : "Expandir aprobación" } }, "fr" : { "stringUnit" : { "state" : "needs_review", "value" : "Développer l’approbation" } }, "he" : { "stringUnit" : { "state" : "needs_review", "value" : "הרחב את בקשת האישור" } }, "it" : { "stringUnit" : { "state" : "needs_review", "value" : "Espandi approvazione" } }, "ja" : { "stringUnit" : { "state" : "needs_review", "value" : "承認内容を展開" } }, "ko" : { "stringUnit" : { "state" : "needs_review", "value" : "승인 요청 펼치기" } }, "nl" : { "stringUnit" : { "state" : "needs_review", "value" : "Goedkeuring uitvouwen" } }, "pl" : { "stringUnit" : { "state" : "needs_review", "value" : "Rozwiń zatwierdzenie" } }, "pt-BR" : { "stringUnit" : { "state" : "needs_review", "value" : "Expandir aprovação" } }, "ru" : { "stringUnit" : { "state" : "needs_review", "value" : "Развернуть подтверждение" } }, "tr" : { "stringUnit" : { "state" : "needs_review", "value" : "Onayı genişlet" } }, "ur" : { "stringUnit" : { "state" : "needs_review", "value" : "منظوری پھیلائیں" } }, "zh-HK" : { "stringUnit" : { "state" : "needs_review", "value" : "展開審批請求" } }, "zh-Hans" : { "stringUnit" : { "state" : "needs_review", "value" : "展开审批请求" } }, "zh-Hant" : { "stringUnit" : { "state" : "needs_review", "value" : "展開審核請求" } } } },
