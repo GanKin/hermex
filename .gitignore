@@ -21,6 +21,7 @@ Package.resolved
 .env
 .env.local
 .env.*.local
+/AuthKey_*.p8
 
 # Per-machine signing overrides (see CONTRIBUTING.md)
 Config/Local.xcconfig
