@@ -356,12 +356,14 @@ final class ChatViewModel {
     private(set) var sendErrorMessage: String? {
         didSet {
             sendErrorIsFromStreamRecovery = false
+            sendErrorIsUnconfirmedPrompt = false
             errorUnserved = nil
             // Slash commands re-set the same text after a failed send; keep the kind then.
             if sendErrorMessage != oldValue, sendErrorRuntimeStale != nil { sendErrorRuntimeStale = nil }
         }
     }
     @ObservationIgnored private var sendErrorIsFromStreamRecovery = false
+    @ObservationIgnored private var sendErrorIsUnconfirmedPrompt = false
     /// Set when the server refused a send because Hermes was updated under the
     /// running WebUI (#955), so the composer can offer Copy fix prompt. A
     /// different `sendErrorMessage` clears it.
@@ -1890,6 +1892,11 @@ final class ChatViewModel {
         attachmentCoordinator.cancelPastedTextStaging()
     }
 
+    /// Keep the durable staging records while the transcript owns the pending send.
+    var composerAttachments: [PendingAttachment] {
+        stagedFilesAreSending ? [] : pendingAttachments
+    }
+
     /// Whether a send may be reading the staged files, or its outcome is unknown (#508), so a
     /// staged paste stays read-only (#1456). A send reads each file only when it gets to it.
     var stagedFilesAreSending: Bool { isSubmittingHermesPrompt || isHermesSubmissionUncertain }
@@ -3182,7 +3189,7 @@ final class ChatViewModel {
     var isHermesSession: Bool { hermesTurn != nil }
 
     /// A Hermes prompt is on its way, from its uploads to the host's answer.
-    @ObservationIgnored private var isSubmittingHermesPrompt = false
+    private var isSubmittingHermesPrompt = false
     /// #508: a Hermes prompt's answer was lost, so nothing sends until the next attach's
     /// snapshot shows whether it ran. Restored from the draft's mark when the chat opens.
     private(set) var isHermesSubmissionUncertain = false
@@ -3418,7 +3425,7 @@ final class ChatViewModel {
                 drafts.setBotSubmissionUncertain(false, for: hermes.currentDraftKey)
                 sendErrorMessage = String(localized: "Hermes did not accept this message. Your draft is still here.")
             } else {
-                sendErrorMessage = String(localized: "Hermes did not confirm this message. Your draft is still here.")
+                setUnconfirmedPromptWarning(for: mode)
                 holdForLostAnswer(hermes)
             }
             return .kept
@@ -3454,13 +3461,25 @@ final class ChatViewModel {
             return .kept
         case .unknown:
             rollbackOptimisticMessage(id: promptID)
-            sendErrorMessage = String(localized: "Hermes did not confirm this message. Your draft is still here.")
+            setUnconfirmedPromptWarning(for: mode)
             holdForLostAnswer(hermes)
             return .kept
         }
         // Accepted: the host holds the files now, so their local copies go.
         await attachmentCoordinator.consumeSentAttachments(files)
         return .started
+    }
+
+    private func setUnconfirmedPromptWarning(for mode: BotPromptMode) {
+        // A slow receipt can arrive after the stream already proved the host is working.
+        // Keep the recovery draft, but do not contradict that live state with an error.
+        guard mode != .send || activeStreamID == nil else { return }
+        sendErrorMessage = String(localized: "Hermes did not confirm this message. Your draft is still here.")
+        sendErrorIsUnconfirmedPrompt = mode == .send
+    }
+
+    private func clearUnconfirmedPromptWarningIfRunning() {
+        if activeStreamID != nil, sendErrorIsUnconfirmedPrompt { sendErrorMessage = nil }
     }
 
     /// A prompt's answer was lost: Send waits, and the chat reattaches so the snapshot
@@ -8402,6 +8421,7 @@ extension ChatViewModel: ChatStreamCoordinatorDelegate {
 
 extension ChatViewModel: HermesChatTurnDelegate {
     func hermesTurnDidStart(prompt: String?) {
+        clearUnconfirmedPromptWarningIfRunning()
         flushPendingStreamingContent()
         archiveLiveActivityForNewTurn()
         streamingAssistantMessageID = nil
@@ -8704,6 +8724,7 @@ extension ChatViewModel: HermesChatTurnDelegate {
         guard let failure else {
             if errorMessage != nil { errorMessage = nil }
             if sendErrorIsFromStreamRecovery { sendErrorMessage = nil }
+            clearUnconfirmedPromptWarningIfRunning()
             releaseSubmissionMark()
             deliverWaitingSendIfReady()
             if needsHermesForkCheck { Task { [weak self] in await self?.resolveHermesForkOrigin() } }

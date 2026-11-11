@@ -387,6 +387,30 @@ import SwiftUI
         XCTAssertEqual(chat.writes("prompt.submit").count, 1)
     }
 
+    func testARecoveredRunClearsOnlyTheUnconfirmedSendWarning() async {
+        let chat = await openChat()
+        chat.host.always("prompt.submit", .init(result: .object(["status": .string("something new")])))
+        _ = await chat.model.sendMessage("Deploy it")
+        XCTAssertNotNil(chat.model.sendErrorMessage)
+        await chat.turn.activate()
+        chat.receive(event(1, "message.start"))
+        XCTAssertNotNil(chat.model.activeStreamID)
+        XCTAssertNil(chat.model.sendErrorMessage)
+        XCTAssertEqual(chat.writes("prompt.submit").count, 1)
+    }
+
+    func testAnUnconfirmedQueueStillWarnsWhileAnotherTurnRuns() async {
+        let chat = await openChat()
+        chat.receive(event(1, "message.start"))
+        chat.host.always("prompt.submit", .init(result: .object(["status": .string("something new")])))
+        _ = await chat.model.submitStreamingMessage("Next request", behavior: .queue)
+        XCTAssertNotNil(chat.model.sendErrorMessage)
+        await chat.turn.activate()
+        chat.receive(event(2, "message.start"))
+        XCTAssertNotNil(chat.model.sendErrorMessage, "another run does not confirm a queued send")
+        XCTAssertEqual(chat.writes("prompt.submit").count, 1)
+    }
+
     /// A new session's draft keeps the new-session key until the host accepts its first
     /// prompt, so leaving before sending leaves it for the next New Session. Then it moves
     /// to the session's own key.

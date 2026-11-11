@@ -645,7 +645,7 @@ struct ChatView: View {
             showsReasoningControl: viewModel.showsReasoningEffortControl,
             isUpdatingConfiguration: viewModel.isUpdatingComposerConfiguration
                 || viewModel.hermesSettings?.controls.isApplying == true || viewModel.pendingHermesFolder != nil,
-            pendingAttachments: viewModel.pendingAttachments,
+            pendingAttachments: viewModel.composerAttachments,
             // An in-flight draft restore counts as an upload in progress: until
             // it finishes, the composer does not yet hold the attachments the
             // user expects this message to carry.
@@ -3031,10 +3031,11 @@ struct ChatView: View {
         )
         let submittedDraftRevision = draftRevision
         let shouldRestoreFocusAfterSend = composerIsFocused
+        let dismissForSubmission = dismissKeyboardAfterSend || !viewModel.pendingAttachments.isEmpty
         let submittedFocusRevision = composerFocusRevision
         let applySubmissionFocus = {
             if isOnScreen, let focus = ChatSendFocusPolicy.focusAfterSubmission(
-                succeeded: true, dismissKeyboard: dismissKeyboardAfterSend,
+                succeeded: true, dismissKeyboard: dismissForSubmission,
                 wasFocused: shouldRestoreFocusAfterSend,
                 submittedRevision: submittedFocusRevision, currentRevision: composerFocusRevision,
                 hasNewDraft: draftRevision != submittedDraftRevision
@@ -3134,6 +3135,8 @@ struct ChatView: View {
             )
             outcome = result.isSuccessfulSubmission ? .started : .kept
         } else {
+            // Collapse before uploads or a slow tunnel acknowledgment can suspend the send.
+            if dismissForSubmission { composerIsFocused = false }
             outcome = await sendStandardMessage(
                 submittedContent,
                 outboundMessage: outboundMessage,

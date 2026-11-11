@@ -140,13 +140,18 @@ import UIKit
     func testCancellingTheUploadSubmitsNothingAndKeepsTheDraft() async {
         let chat = await openChat()
         _ = HermesHostFixture.configuration { request in request.url?.path == "/api/chat/image-upload" ? .park : nil }
-        HermesHostFixture.onPark = { Task { @MainActor in chat.model.cancelAttachmentUpload() } }
+        HermesHostFixture.onPark = { Task { @MainActor in
+            XCTAssertTrue(chat.model.composerAttachments.isEmpty)
+            XCTAssertEqual(chat.model.pendingAttachments.map(\.name), ["photo.jpg"])
+            chat.model.cancelAttachmentUpload()
+        } }
         chat.host.always("prompt.submit", .init(result: .object(["status": .string("streaming")])))
         await chat.model.uploadAttachment(data: photo, filename: "photo.jpg", previewData: photo)
 
         let sent = await chat.model.sendMessage("Look")
         XCTAssertFalse(sent)
         XCTAssertFalse(chat.model.isSendingAttachments)
+        XCTAssertEqual(chat.model.composerAttachments.map(\.name), ["photo.jpg"])
         XCTAssertEqual(chat.writes("prompt.submit"), [])
         XCTAssertEqual(chat.model.pendingAttachments.map(\.name), ["photo.jpg"])
         XCTAssertEqual(chat.model.messages, [])
